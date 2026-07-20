@@ -5,6 +5,11 @@
   font-family: "Outfit", sans-serif;
 }
 
-@theme{
+@theme {
   --color-primary: #5044e5;
+}
+
+.reset-tw,
+.reset-tw * {
+  all: revert !important;
 }
