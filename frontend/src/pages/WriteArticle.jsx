@@ -33,7 +33,7 @@ const WriteArticle = () => {
         className="w-full max-w-lg p-4 bg-white rounded-lg border border-gray-200"
       >
         <div className="flex items-center gap-3">
-          <Sparkles className="w-5 text-[#4a7aff]" />
+          <Sparkles className="w-6 text-[#4a7aff]" />
           <h1 className="text-xl font-semibold">Article Configuration</h1>
         </div>
 
