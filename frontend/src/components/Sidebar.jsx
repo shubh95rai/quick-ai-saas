@@ -1,4 +1,5 @@
 import {
+  Edit,
   Eraser,
   FileText,
   Hash,
@@ -18,11 +19,16 @@ const navItems = [
   {
     to: "/ai/write-article",
     label: "Write Article",
-    Icon: Hash,
+    Icon: Edit,
   },
   {
     to: "/ai/blog-titles",
     label: "Blog Titles",
+    Icon: Hash,
+  },
+  {
+    to: "/ai/generate-images",
+    label: "Generate Images",
     Icon: Image,
   },
   {
