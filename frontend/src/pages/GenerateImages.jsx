@@ -80,7 +80,7 @@ const GenerateImages = () => {
 
         <button className="w-full flex items-center gap-2 justify-center bg-linear-to-r from-[#00ad25] to-[#04ff50] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer">
           <Image className="w-5" />
-          Generate image
+          Generate Image
         </button>
       </form>
 
@@ -88,13 +88,13 @@ const GenerateImages = () => {
       <div className="w-full max-w-lg p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96">
         <div className="flex items-center gap-3">
           <Image className="w-5 h-5 text-[#00ad25]" />
-          <h1 className="text-xl font-semibold">Generated image</h1>
+          <h1 className="text-xl font-semibold">Generated Image</h1>
         </div>
 
         <div className="flex-1 flex justify-center items-center">
           <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
             <Image className="w-9 h-9" />
-            <p>Enter a topic and click "Generate image" to get started</p>
+            <p>Enter a topic and click "Generate Image" to get started</p>
           </div>
         </div>
       </div>
