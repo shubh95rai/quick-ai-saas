@@ -1,13 +1,12 @@
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import Markdown from "react-markdown";
 
-const CreationItem = ({ item }) => {
-  const [expanded, setExpanded] = useState(false);
-
+const CreationItem = ({ item, expanded, onToggle }) => {
   return (
     <div
-      onClick={() => setExpanded(!expanded)}
-      className="p-4 max-w-5xl text-sm bg-white border border-gray-200 rounded-lg cursor-pointer"
+      onClick={onToggle}
+      className="p-4 max-w-5xl text-sm bg-white border border-gray-200 rounded-lg cursor-pointer hover:shadow-md transition-shadow"
     >
       <div className="flex justify-between items-center gap-4">
         <div>
@@ -17,9 +16,17 @@ const CreationItem = ({ item }) => {
           </p>
         </div>
 
-        <button className="bg-[#eff6ff] border border-[#bfdbfe] text-[#1e40af] px-4 py-1 rounded-full">
-          {item.type}
-        </button>
+        <div className="flex items-center gap-2">
+          <button className="bg-[#eff6ff] border border-[#bfdbfe] text-[#1e40af] px-4 py-1 rounded-full">
+            {item.type}
+          </button>
+
+          <ChevronDown
+            className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${
+              expanded ? "rotate-180" : ""
+            }`}
+          />
+        </div>
       </div>
 
       {expanded && (

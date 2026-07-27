@@ -8,6 +8,7 @@ import axiosInstance from "../../utils/axiosInstance.js";
 const Dashboard = () => {
   const [creations, setCreations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState(null);
 
   const getDashboardData = async () => {
     try {
@@ -21,6 +22,10 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleToggle = (id) => {
+    setExpandedId((prevId) => (prevId === id ? null : id));
   };
 
   useEffect(() => {
@@ -50,7 +55,12 @@ const Dashboard = () => {
         <div className="space-y-3">
           <p className="mt-6 mb-4">Recent Creations</p>
           {creations.map((item) => (
-            <CreationItem key={item.id} item={item} />
+            <CreationItem
+              key={item.id}
+              item={item}
+              expanded={expandedId === item.id}
+              onToggle={() => handleToggle(item.id)}
+            />
           ))}
         </div>
       )}
