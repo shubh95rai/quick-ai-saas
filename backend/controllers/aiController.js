@@ -10,6 +10,12 @@ const AI = new OpenAI({
   baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
 });
 
+const lengthToTokens = {
+  800: 3000, // Short (500-800 words)
+  1200: 4500, // Medium (800-1200 words)
+  1600: 6000, // Long (1200+ words)
+};
+
 export const generateArticle = async (req, res) => {
   try {
     const { prompt, length } = req.body;
@@ -26,6 +32,8 @@ export const generateArticle = async (req, res) => {
       });
     }
 
+    const maxTokens = lengthToTokens[length] || length * 3;
+
     const response = await AI.chat.completions.create({
       model: "gemini-3.6-flash",
       messages: [
@@ -35,10 +43,17 @@ export const generateArticle = async (req, res) => {
         },
       ],
       temperature: 0.7,
-      max_tokens: length,
+      max_tokens: maxTokens,
+      extra_body: {
+        google: {
+          thinking_config: { thinking_level: "low" },
+        },
+      },
     });
 
     const content = response.choices[0].message.content;
+
+    // console.log("response:::", response);
 
     await sql`INSERT INTO creations (prompt, content, type) 
     VALUES (${prompt}, ${content}, 'article')`;
@@ -75,10 +90,17 @@ export const generateBlogTitle = async (req, res) => {
         },
       ],
       temperature: 0.7,
-      max_tokens: 100,
+      max_tokens: 300,
+      extra_body: {
+        google: {
+          thinking_config: { thinking_level: "minimal" },
+        },
+      },
     });
 
     const content = response.choices[0].message.content;
+
+    // console.log("response:::", response);
 
     await sql`INSERT INTO creations (prompt, content, type) 
     VALUES (${prompt}, ${content}, 'blog-title')`;
