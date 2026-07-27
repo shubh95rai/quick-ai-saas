@@ -16,8 +16,8 @@ const CreationItem = ({ item, expanded, onToggle }) => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button className="bg-[#eff6ff] border border-[#bfdbfe] text-[#1e40af] px-4 py-1 rounded-full">
+        <div className="flex items-center gap-2 shrink-0">
+          <button className="bg-[#eff6ff] border border-[#bfdbfe] text-[#1e40af] px-4 py-1 rounded-full text-xs sm:text-sm">
             {item.type}
           </button>
 
