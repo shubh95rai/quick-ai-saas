@@ -56,9 +56,9 @@ const navItems = [
 const Sidebar = ({ sidebar, setSidebar }) => {
   return (
     <div
-      className={`w-60 bg-white border-r border-gray-200 flex flex-col items-center justify-between max-sm:absolute top-14 bottom-0 ${sidebar ? "translate-x-0" : "max-sm:translate-x-full"} transition-all duration-300 ease-in-out`}
+      className={`w-60 bg-white border-r border-gray-200 flex flex-col items-center justify-between max-sm:absolute top-14 bottom-0 ${sidebar ? "translate-x-0" : "max-sm:-translate-x-full"} transition-all duration-300 ease-in-out`}
     >
-      <div className="my-7 w-full">
+      <div className="w-full">
         <div className="px-6 mt-5 text-sm text-gray-600 font-medium">
           {navItems.map(({ to, label, Icon }) => (
             <NavLink
