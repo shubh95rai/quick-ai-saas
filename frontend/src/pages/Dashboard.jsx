@@ -1,13 +1,26 @@
 import { useEffect, useState } from "react";
 import { dummyCreationData } from "../assets/assets.js";
-import { Sparkles } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import CreationItem from "../components/CreationItem.jsx";
+import handleApiError from "../../utils/handleApiError.js";
+import axiosInstance from "../../utils/axiosInstance.js";
 
 const Dashboard = () => {
   const [creations, setCreations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const getDashboardData = async () => {
-    setCreations(dummyCreationData);
+    try {
+      setLoading(true);
+
+      const res = await axiosInstance.get("/user/get-creations");
+
+      setCreations(res.data.creations);
+    } catch (error) {
+      handleApiError(error, "getting dashboard data");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -29,12 +42,18 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="space-y-3">
-        <p className="mt-6 mb-4">Recent Creations</p>
-        {creations.map((item) => (
-          <CreationItem key={item.id} item={item} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="flex items-center justify-center h-3/4">
+          <Loader2 className="size-8 animate-spin text-primary" />
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <p className="mt-6 mb-4">Recent Creations</p>
+          {creations.map((item) => (
+            <CreationItem key={item.id} item={item} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

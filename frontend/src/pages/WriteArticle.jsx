@@ -1,5 +1,8 @@
-import { Edit, Sparkles } from "lucide-react";
+import { Edit, Loader2, Sparkles } from "lucide-react";
 import { useState } from "react";
+import handleApiError from "../../utils/handleApiError.js";
+import axiosInstance from "../../utils/axiosInstance.js";
+import Markdown from "react-markdown";
 
 const articleLength = [
   {
@@ -18,11 +21,30 @@ const articleLength = [
 
 const WriteArticle = () => {
   const [selectedLength, setSelectedLength] = useState(articleLength[0]);
-  const [prompt, setPrompt] = useState("");
+  const [input, setInput] = useState("");
 
-  const onSubmitHandler = (e) => {
+  const [loading, setLoading] = useState(false);
+  const [content, setContent] = useState("");
+
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
-    console.log("Submitted");
+
+    try {
+      setLoading(true);
+
+      const prompt = `Write an article about ${input} in ${selectedLength.length} words`;
+
+      const res = await axiosInstance.post("/ai/generate-article", {
+        prompt,
+        length: selectedLength.length,
+      });
+
+      setContent(res.data.content);
+    } catch (error) {
+      handleApiError(error, "Generate Article");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -40,8 +62,8 @@ const WriteArticle = () => {
         <p className="mt-6 text-sm font-semibold">Article Topic</p>
 
         <input
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
           type="text"
           className="w-full p-2 px-3 mt-2 outline-none text-sm rounded-md border border-gray-300"
           placeholder="The future of artificial intelligence is..."
@@ -66,8 +88,15 @@ const WriteArticle = () => {
 
         <br />
 
-        <button className="w-full flex items-center gap-2 justify-center bg-linear-to-r from-[#226bff] to-[#65adff] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer">
-          <Edit className="w-5" />
+        <button
+          disabled={loading}
+          className="w-full flex items-center gap-2 justify-center bg-linear-to-r from-[#226bff] to-[#65adff] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer"
+        >
+          {loading ? (
+            <Loader2 className="animate-spin w-5" />
+          ) : (
+            <Edit className="w-5" />
+          )}
           Generate Article
         </button>
       </form>
@@ -79,12 +108,20 @@ const WriteArticle = () => {
           <h1 className="text-xl font-semibold">Generated Article</h1>
         </div>
 
-        <div className="flex-1 flex justify-center items-center">
-          <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
-            <Edit className="w-9 h-9" />
-            <p>Enter a topic and click "Generate Article" to get started</p>
+        {!content ? (
+          <div className="flex-1 flex justify-center items-center">
+            <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
+              <Edit className="w-9 h-9" />
+              <p>Enter a topic and click "Generate Article" to get started</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="mt-3 h-full overflow-y-scroll text-sm text-slate-600">
+            <div className="reset-tw">
+              <Markdown>{content}</Markdown>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

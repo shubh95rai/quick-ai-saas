@@ -1,12 +1,34 @@
-import { Eraser, Sparkles } from "lucide-react";
+import { Eraser, Loader2, Sparkles } from "lucide-react";
 import { useState } from "react";
+import handleApiError from "../../utils/handleApiError.js";
+import axiosInstance from "../../utils/axiosInstance.js";
 
 const RemoveBackground = () => {
   const [image, setImage] = useState("");
 
-  const onSubmitHandler = (e) => {
+  const [loading, setLoading] = useState(false);
+  const [content, setContent] = useState("");
+
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
-    console.log("Submitted");
+
+    try {
+      setLoading(true);
+
+      const formData = new FormData();
+      formData.append("image", image);
+
+      const res = await axiosInstance.post(
+        "/ai/remove-image-background",
+        formData,
+      );
+
+      setContent(res.data.content);
+    } catch (error) {
+      handleApiError(error, "Remove Background");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,8 +57,15 @@ const RemoveBackground = () => {
           Supports JPG, PNG, and other image formats
         </p>
 
-        <button className="w-full flex items-center gap-2 justify-center bg-linear-to-r from-[#f6ab41] to-[#ff4938] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer">
-          <Eraser className="w-5" />
+        <button
+          disabled={loading}
+          className="w-full flex items-center gap-2 justify-center bg-linear-to-r from-[#f6ab41] to-[#ff4938] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer"
+        >
+          {loading ? (
+            <Loader2 className="animate-spin w-5" />
+          ) : (
+            <Eraser className="w-5" />
+          )}
           Remove Background
         </button>
       </form>
@@ -48,12 +77,18 @@ const RemoveBackground = () => {
           <h1 className="text-xl font-semibold">Processed Image</h1>
         </div>
 
-        <div className="flex-1 flex justify-center items-center">
-          <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
-            <Eraser className="w-9 h-9" />
-            <p>Upload an image and click "Remove Background" to get started</p>
+        {!content ? (
+          <div className="flex-1 flex justify-center items-center">
+            <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
+              <Eraser className="w-9 h-9" />
+              <p>
+                Upload an image and click "Remove Background" to get started
+              </p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <img src={content} alt="image" className="mt-3 w-full h-full" />
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,9 @@
-import { Hash, Sparkles } from "lucide-react";
+import { Hash, Loader2, Sparkles } from "lucide-react";
 import { useState } from "react";
+import handleApiError from "../../utils/handleApiError.js";
+import axios from "axios";
+import Markdown from "react-markdown";
+import axiosInstance from "../../utils/axiosInstance.js";
 
 const blogCategories = [
   "General",
@@ -15,11 +19,29 @@ const blogCategories = [
 
 const BLogTitles = () => {
   const [selectedCategory, setSelectedCategory] = useState("General");
-  const [prompt, setPrompt] = useState("");
+  const [input, setInput] = useState("");
 
-  const onSubmitHandler = (e) => {
+  const [loading, setLoading] = useState(false);
+  const [content, setContent] = useState("");
+
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
-    console.log("Submitted");
+
+    try {
+      setLoading(true);
+
+      const prompt = `Generate a blog title for the keyword ${input} in the category ${selectedCategory}`;
+
+      const res = await axiosInstance.post("/ai/generate-blog-title", {
+        prompt,
+      });
+
+      setContent(res.data.content);
+    } catch (error) {
+      handleApiError(error, "Generate Blog Title");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -37,8 +59,8 @@ const BLogTitles = () => {
         <p className="mt-6 text-sm font-semibold">Keyword</p>
 
         <input
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
           type="text"
           className="w-full p-2 px-3 mt-2 outline-none text-sm rounded-md border border-gray-300"
           placeholder="The future of artificial intelligence is..."
@@ -63,8 +85,15 @@ const BLogTitles = () => {
 
         <br />
 
-        <button className="w-full flex items-center gap-2 justify-center bg-linear-to-r from-[#c341f6] to-[#8e37eb] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer">
-          <Hash className="w-5" />
+        <button
+          disabled={loading}
+          className="w-full flex items-center gap-2 justify-center bg-linear-to-r from-[#c341f6] to-[#8e37eb] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer"
+        >
+          {loading ? (
+            <Loader2 className="animate-spin w-5" />
+          ) : (
+            <Hash className="w-5" />
+          )}
           Generate Title
         </button>
       </form>
@@ -76,12 +105,20 @@ const BLogTitles = () => {
           <h1 className="text-xl font-semibold">Generated Titles</h1>
         </div>
 
-        <div className="flex-1 flex justify-center items-center">
-          <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
-            <Hash className="w-9 h-9" />
-            <p>Enter a topic and click "Generate Title" to get started</p>
+        {!content ? (
+          <div className="flex-1 flex justify-center items-center">
+            <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
+              <Hash className="w-9 h-9" />
+              <p>Enter a topic and click "Generate Title" to get started</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="mt-3 h-full overflow-y-scroll text-sm text-slate-600">
+            <div className="reset-tw">
+              <Markdown>{content}</Markdown>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

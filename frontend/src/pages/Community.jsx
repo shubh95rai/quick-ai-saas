@@ -1,18 +1,31 @@
 import { useEffect, useState } from "react";
-import { dummyPublishedCreationData } from "../assets/assets.js";
+import handleApiError from "../../utils/handleApiError.js";
+import axiosInstance from "../../utils/axiosInstance.js";
+import { Loader2 } from "lucide-react";
 
 const Community = () => {
   const [creations, setCreations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchCreations = async () => {
-    setCreations(dummyPublishedCreationData);
+    try {
+      setLoading(true);
+
+      const res = await axiosInstance.get("/user/get-published-creations");
+
+      setCreations(res.data.creations);
+    } catch (error) {
+      handleApiError(error, "fetching creations");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchCreations();
   }, []);
 
-  return (
+  return !loading ? (
     <div className="flex-1 h-full flex flex-col gap-4 p-6">
       <h1 className="text-xl font-semibold text-slate-700">
         Community Creations
@@ -37,6 +50,10 @@ const Community = () => {
           </div>
         ))}
       </div>
+    </div>
+  ) : (
+    <div className="flex items-center justify-center h-3/4">
+      <Loader2 className="size-8 animate-spin text-primary" />
     </div>
   );
 };

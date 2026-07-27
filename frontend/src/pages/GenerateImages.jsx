@@ -1,5 +1,7 @@
-import { Image, Sparkles } from "lucide-react";
+import { Image, Loader2, Sparkles } from "lucide-react";
 import { useState } from "react";
+import handleApiError from "../../utils/handleApiError.js";
+import axiosInstance from "../../utils/axiosInstance.js";
 
 const imageStyles = [
   "Realistic",
@@ -14,12 +16,31 @@ const imageStyles = [
 
 const GenerateImages = () => {
   const [selectedStyle, setSelectedStyle] = useState("Ghibli Style");
-  const [prompt, setPrompt] = useState("");
+  const [input, setInput] = useState("");
   const [publish, setPublish] = useState(false);
 
-  const onSubmitHandler = (e) => {
+  const [loading, setLoading] = useState(false);
+  const [content, setContent] = useState("");
+
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
-    console.log("Submitted");
+
+    try {
+      setLoading(true);
+
+      const prompt = `Generate an image of ${input} in the style ${selectedStyle}`;
+
+      const res = await axiosInstance.post("/ai/generate-image", {
+        prompt,
+        publish,
+      });
+
+      setContent(res.data.content);
+    } catch (error) {
+      handleApiError(error, "Generate Image");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -37,8 +58,8 @@ const GenerateImages = () => {
         <p className="mt-6 text-sm font-semibold">Describe Your Image</p>
 
         <textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
           rows={4}
           className="w-full p-2 px-3 mt-2 outline-none text-sm rounded-md border border-gray-300"
           placeholder="Describe your image in detail..."
@@ -78,8 +99,15 @@ const GenerateImages = () => {
           <p className="text-sm">Make this image Public</p>
         </div>
 
-        <button className="w-full flex items-center gap-2 justify-center bg-linear-to-r from-[#00ad25] to-[#04ff50] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer">
-          <Image className="w-5" />
+        <button
+          disabled={loading}
+          className="w-full flex items-center gap-2 justify-center bg-linear-to-r from-[#00ad25] to-[#04ff50] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer"
+        >
+          {loading ? (
+            <Loader2 className="animate-spin w-5" />
+          ) : (
+            <Image className="w-5" />
+          )}
           Generate Image
         </button>
       </form>
@@ -91,12 +119,22 @@ const GenerateImages = () => {
           <h1 className="text-xl font-semibold">Generated Image</h1>
         </div>
 
-        <div className="flex-1 flex justify-center items-center">
-          <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
-            <Image className="w-9 h-9" />
-            <p>Enter a topic and click "Generate Image" to get started</p>
+        {!content ? (
+          <div className="flex-1 flex justify-center items-center">
+            <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
+              <Image className="w-9 h-9" />
+              <p>Enter a topic and click "Generate Image" to get started</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="mt-3 h-full">
+            <img
+              src={content}
+              alt="generated-image"
+              className="w-full h-full"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

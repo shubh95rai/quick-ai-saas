@@ -1,13 +1,39 @@
-import { Eraser, Scissors, Sparkles } from "lucide-react";
+import { Eraser, Loader2, Scissors, Sparkles } from "lucide-react";
 import { useState } from "react";
+import handleApiError from "../../utils/handleApiError.js";
+import axiosInstance from "../../utils/axiosInstance.js";
+import toast from "react-hot-toast";
 
 const RemoveObject = () => {
   const [image, setImage] = useState("");
   const [object, setObject] = useState("");
 
-  const onSubmitHandler = (e) => {
+  const [loading, setLoading] = useState(false);
+  const [content, setContent] = useState("");
+
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
-    console.log("Submitted");
+
+    try {
+      setLoading(true);
+
+      if (object.split(" ").length > 1) {
+        toast.error("Please enter only single object name");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("image", image);
+      formData.append("object", object);
+
+      const res = await axiosInstance.post("/ai/remove-image-object", formData);
+
+      setContent(res.data.content);
+    } catch (error) {
+      handleApiError(error, "Remove Object");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -32,7 +58,9 @@ const RemoveObject = () => {
           required
         />
 
-        <p className="mt-6 text-sm font-semibold">Describe object name to remove</p>
+        <p className="mt-6 text-sm font-semibold">
+          Describe object name to remove
+        </p>
 
         <textarea
           value={object}
@@ -43,8 +71,15 @@ const RemoveObject = () => {
           required
         />
 
-        <button className="w-full flex items-center gap-2 justify-center bg-linear-to-r from-[#417df6] to-[#8e37eb] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer">
-          <Scissors className="w-5" />
+        <button
+          disabled={loading}
+          className="w-full flex items-center gap-2 justify-center bg-linear-to-r from-[#417df6] to-[#8e37eb] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer"
+        >
+          {loading ? (
+            <Loader2 className="animate-spin w-5" />
+          ) : (
+            <Scissors className="w-5" />
+          )}
           Remove Object
         </button>
       </form>
@@ -56,12 +91,16 @@ const RemoveObject = () => {
           <h1 className="text-xl font-semibold">Processed Image</h1>
         </div>
 
-        <div className="flex-1 flex justify-center items-center">
-          <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
-            <Scissors className="w-9 h-9" />
-            <p>Upload an image and click "Remove Object" to get started</p>
+        {!content ? (
+          <div className="flex-1 flex justify-center items-center">
+            <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
+              <Scissors className="w-9 h-9" />
+              <p>Upload an image and click "Remove Object" to get started</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <img src={content} alt="image" className="mt-3 w-full h-full" />
+        )}
       </div>
     </div>
   );
