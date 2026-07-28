@@ -1,5 +1,4 @@
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
 import Markdown from "react-markdown";
 
 const CreationItem = ({ item, expanded, onToggle }) => {
@@ -36,11 +35,11 @@ const CreationItem = ({ item, expanded, onToggle }) => {
               <img
                 src={item.content}
                 alt="image"
-                className="mt-3 w-full max-w-md"
+                className="mt-3 w-full max-w-md rounded-md"
               />
             </div>
           ) : (
-            <div className="mt-3 h-full overflow-y-scroll text-sm text-slate-700">
+            <div className="mt-3 max-h-96 overflow-y-auto text-sm text-slate-700">
               <div className="reset-tw">
                 <Markdown>{item.content}</Markdown>
               </div>

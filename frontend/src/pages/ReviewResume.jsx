@@ -29,7 +29,7 @@ const ReviewResume = () => {
   };
 
   return (
-    <div className="h-full overflow-y-scroll p-6 flex items-start flex-wrap gap-4 text-slate-700">
+    <div className="h-full overflow-y-auto p-6 flex items-start flex-wrap gap-4 text-slate-700">
       {/* Left col */}
       <form
         onSubmit={onSubmitHandler}
@@ -68,7 +68,7 @@ const ReviewResume = () => {
       </form>
 
       {/* Right col */}
-      <div className="w-full max-w-lg p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96 max-h-150">
+      <div className="w-full max-w-lg p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96 max-h-140">
         <div className="flex items-center gap-3">
           <FileText className="w-5 h-5 text-[#00da83]" />
           <h1 className="text-xl font-semibold">Analysis Results</h1>
@@ -82,7 +82,7 @@ const ReviewResume = () => {
             </div>
           </div>
         ) : (
-          <div className="mt-3 h-full overflow-y-scroll text-sm text-slate-600">
+          <div className="mt-3 flex-1 overflow-y-auto text-sm text-slate-600">
             <div className="reset-tw">
               <Markdown>{content}</Markdown>
             </div>

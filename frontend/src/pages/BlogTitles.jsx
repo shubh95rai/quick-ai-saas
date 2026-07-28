@@ -1,7 +1,6 @@
 import { Hash, Loader2, Sparkles } from "lucide-react";
 import { useState } from "react";
 import handleApiError from "../../utils/handleApiError.js";
-import axios from "axios";
 import Markdown from "react-markdown";
 import axiosInstance from "../../utils/axiosInstance.js";
 
@@ -45,7 +44,7 @@ const BLogTitles = () => {
   };
 
   return (
-    <div className="h-full overflow-y-scroll p-6 flex items-start flex-wrap gap-4 text-slate-700">
+    <div className="h-full overflow-y-auto p-6 flex items-start flex-wrap gap-4 text-slate-700">
       {/* Left col */}
       <form
         onSubmit={onSubmitHandler}
@@ -83,8 +82,6 @@ const BLogTitles = () => {
           ))}
         </div>
 
-        <br />
-
         <button
           disabled={loading}
           className="w-full flex items-center gap-2 justify-center bg-linear-to-r from-[#c341f6] to-[#8e37eb] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer"
@@ -99,7 +96,7 @@ const BLogTitles = () => {
       </form>
 
       {/* Right col */}
-      <div className="w-full max-w-lg p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96">
+      <div className="w-full max-w-lg p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96 max-h-[calc(100vh-8rem)]">
         <div className="flex items-center gap-3">
           <Hash className="w-5 h-5 text-[#8e37eb]" />
           <h1 className="text-xl font-semibold">Generated Titles</h1>
@@ -113,7 +110,7 @@ const BLogTitles = () => {
             </div>
           </div>
         ) : (
-          <div className="mt-3 h-full overflow-y-scroll text-sm text-slate-600">
+          <div className="mt-3 flex-1 overflow-y-auto text-sm text-slate-600">
             <div className="reset-tw">
               <Markdown>{content}</Markdown>
             </div>

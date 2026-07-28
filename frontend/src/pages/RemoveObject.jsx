@@ -1,4 +1,4 @@
-import { Eraser, Loader2, Scissors, Sparkles } from "lucide-react";
+import { Loader2, Scissors, Sparkles } from "lucide-react";
 import { useState } from "react";
 import handleApiError from "../../utils/handleApiError.js";
 import axiosInstance from "../../utils/axiosInstance.js";
@@ -14,17 +14,29 @@ const RemoveObject = () => {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
+    const trimmedObject = object.trim();
+
+    if (!image) {
+      toast.error("Please upload an image");
+      return;
+    }
+
+    if (!trimmedObject) {
+      toast.error("Please enter an object name");
+      return;
+    }
+
+    if (/\s/.test(trimmedObject)) {
+      toast.error("Please enter only a single object name");
+      return;
+    }
+
     try {
       setLoading(true);
 
-      if (object.split(" ").length > 1) {
-        toast.error("Please enter only single object name");
-        return;
-      }
-
       const formData = new FormData();
       formData.append("image", image);
-      formData.append("object", object);
+      formData.append("object", trimmedObject);
 
       const res = await axiosInstance.post("/ai/remove-image-object", formData);
 
@@ -37,7 +49,7 @@ const RemoveObject = () => {
   };
 
   return (
-    <div className="h-full overflow-y-scroll p-6 flex items-start flex-wrap gap-4 text-slate-700">
+    <div className="h-full overflow-y-auto p-6 flex items-start flex-wrap gap-4 text-slate-700">
       {/* Left col */}
       <form
         onSubmit={onSubmitHandler}
@@ -55,7 +67,6 @@ const RemoveObject = () => {
           type="file"
           accept="image/*"
           className="w-full p-2 px-3 mt-2 outline-none text-sm rounded-md border border-gray-300 text-gray-600"
-          required
         />
 
         <p className="mt-6 text-sm font-semibold">
@@ -68,7 +79,6 @@ const RemoveObject = () => {
           rows={4}
           className="w-full p-2 px-3 mt-2 outline-none text-sm rounded-md border border-gray-300"
           placeholder="e.g. watch or person etc. Only single object name"
-          required
         />
 
         <button
@@ -99,7 +109,13 @@ const RemoveObject = () => {
             </div>
           </div>
         ) : (
-          <img src={content} alt="image" className="mt-3 w-full h-full" />
+          <div className="mt-3 flex-1 flex items-center justify-center overflow-hidden rounded-lg bg-slate-50">
+            <img
+              src={content}
+              alt="processed-image"
+              className="w-full h-full object-contain"
+            />
+          </div>
         )}
       </div>
     </div>

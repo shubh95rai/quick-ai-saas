@@ -48,7 +48,7 @@ const WriteArticle = () => {
   };
 
   return (
-    <div className="h-full overflow-y-scroll p-6 flex items-start flex-wrap gap-4 text-slate-700">
+    <div className="h-full overflow-y-auto p-6 flex items-start flex-wrap gap-4 text-slate-700">
       {/* Left col */}
       <form
         onSubmit={onSubmitHandler}
@@ -86,8 +86,6 @@ const WriteArticle = () => {
           ))}
         </div>
 
-        <br />
-
         <button
           disabled={loading}
           className="w-full flex items-center gap-2 justify-center bg-linear-to-r from-[#226bff] to-[#65adff] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer"
@@ -102,7 +100,7 @@ const WriteArticle = () => {
       </form>
 
       {/* Right col */}
-      <div className="w-full max-w-lg p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96 max-h-150">
+      <div className="w-full max-w-lg p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96 max-h-140">
         <div className="flex items-center gap-3">
           <Edit className="w-5 h-5 text-[#4a7aff]" />
           <h1 className="text-xl font-semibold">Generated Article</h1>
@@ -116,7 +114,7 @@ const WriteArticle = () => {
             </div>
           </div>
         ) : (
-          <div className="mt-3 h-full overflow-y-scroll text-sm text-slate-600">
+          <div className="mt-3 flex-1 overflow-y-auto text-sm text-slate-600">
             <div className="reset-tw">
               <Markdown>{content}</Markdown>
             </div>

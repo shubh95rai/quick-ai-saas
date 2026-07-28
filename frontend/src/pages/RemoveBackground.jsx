@@ -32,7 +32,7 @@ const RemoveBackground = () => {
   };
 
   return (
-    <div className="h-full overflow-y-scroll p-6 flex items-start flex-wrap gap-4 text-slate-700">
+    <div className="h-full overflow-y-auto p-6 flex items-start flex-wrap gap-4 text-slate-700">
       {/* Left col */}
       <form
         onSubmit={onSubmitHandler}
@@ -87,7 +87,13 @@ const RemoveBackground = () => {
             </div>
           </div>
         ) : (
-          <img src={content} alt="image" className="mt-3 w-full h-full" />
+          <div className="mt-3 flex-1 flex items-center justify-center overflow-hidden rounded-lg bg-slate-50">
+            <img
+              src={content}
+              alt="processed-image"
+              className="w-full h-full object-contain"
+            />
+          </div>
         )}
       </div>
     </div>
