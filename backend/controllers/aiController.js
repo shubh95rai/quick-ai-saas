@@ -2,8 +2,8 @@ import OpenAI from "openai";
 import { sql } from "../configs/db.js";
 import axios from "axios";
 import cloudinary from "../configs/cloudinary.js";
-import { PDFParse } from "pdf-parse";
 import fs from "fs";
+import pdf from "pdf-parse/lib/pdf-parse.js";
 
 const AI = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -266,10 +266,7 @@ export const reviewResume = async (req, res) => {
     }
 
     const dataBuffer = fs.readFileSync(resume.path);
-    const parser = new PDFParse({
-      data: Uint8Array.from(dataBuffer),
-    });
-    const pdfData = await parser.getText();
+    const pdfData = await pdf(dataBuffer);
 
     const prompt = `Review the following resume and provide constructive feedback on its strengths, weaknesses, and areas for improvement, Resume Content:\n\n${pdfData.text}`;
 
@@ -282,10 +279,17 @@ export const reviewResume = async (req, res) => {
         },
       ],
       temperature: 0.7,
-      max_tokens: 1000,
+      max_tokens: 3000,
+      extra_body: {
+        google: {
+          thinking_config: { thinking_level: "low" },
+        },
+      },
     });
 
     const content = response.choices[0].message.content;
+
+    // console.log("response:::", response);
 
     await sql`INSERT INTO creations (prompt, content, type)
     VALUES ('Review resume', ${content}, 'review-resume')`;
