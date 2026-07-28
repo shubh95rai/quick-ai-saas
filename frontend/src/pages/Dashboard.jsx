@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { dummyCreationData } from "../assets/assets.js";
 import { Loader2, Sparkles } from "lucide-react";
 import CreationItem from "../components/CreationItem.jsx";
 import handleApiError from "../../utils/handleApiError.js";
@@ -33,7 +32,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="h-full overflow-y-scroll p-6">
+    <div className="h-full overflow-y-auto p-6">
       <div className="flex justify-start gap-4 flex-wrap">
         {/* Total creation card */}
         <div className="flex justify-between items-center max-xs:w-full w-72 p-4 px-6 bg-white rounded-xl border border-gray-200">
